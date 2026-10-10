@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>ちょこっと お薬 Prototype V11</title>
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #f5f5f5;
+  color: #222;
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  min-width: 320px;
+}
+#app {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  background: #fff;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+.header,
+.row {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.header {
+  border-bottom: 2px solid #777;
+  background: #efefef;
+}
+.header td,
+.row td {
+  padding: 7px 2px;
+  font-size: 11px;
+  line-height: 1.2;
+  text-align: center;
+  vertical-align: middle;
+  box-sizing: border-box;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.header .name,
+.row .name { width: 39%; text-align: left; padding-left: 6px; }
+.header .state,
+.row .state { width: 14%; }
+.header .interval,
+.row .interval { width: 14%; }
+.header .remain,
+.row .remain { width: 18%; }
+.header .possible,
+.row .possible { width: 15%; }
+.header .title {
+  font-weight: bold;
+  font-size: 13px;
+}
+.list-row {
+  border-bottom: 1px solid #d8d8d8;
+}
+.interval-active {
+  background: #ffe4e4;
+}
+.elapsed-active {
+  background: #fff6cc;
+}
+.name-button {
+  display: block;
+  width: 100%;
+  padding: 7px 5px;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  background: #fff;
+  color: #222;
+  text-align: left;
+  font-size: 12px;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+}
+.content {
+  padding: 10px 8px 14px 8px;
+}
+.form-line {
+  margin: 7px 0;
+  font-size: 13px;
+}
+.text-input,
+.time-input {
+  height: 38px;
+  border: 1px solid #999;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+  padding: 5px 7px;
+  background: #fff;
+  -webkit-appearance: none;
+}
+.text-input { width: 62%; }
+.time-input { width: 84px; text-align: center; float: right; }
+.clearfix:after { content: ""; display: block; clear: both; }
+.action-area {
+  margin-top: 14px;
+  text-align: right;
+}
+.btn {
+  min-height: 40px;
+  border: 1px solid #888;
+  border-radius: 6px;
+  background: #f8f8f8;
+  color: #111;
+  font-size: 14px;
+  padding: 7px 12px;
+  margin: 4px 0 4px 6px;
+  -webkit-appearance: none;
+  width: 124px;
+}
+.btn-wide {
+  width: 124px;
+}
+.footer {
+  border-top: 2px solid #777;
+  padding: 10px 8px 12px 8px;
+  background: #fafafa;
+}
+.footer .btn {
+  margin-left: 0;
+  width: 124px;
+}
+.detail-main {
+  border-bottom: 1px solid #ddd;
+}
+.detail-info {
+  padding: 12px 10px 16px 10px;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.history-line {
+  text-align: left;
+  white-space: nowrap;
+}
+.history-label {
+  display: inline-block;
+  width: 64px;
+  text-align: left;
+}
+.history-time {
+  display: inline-block;
+  min-width: 125px;
+  text-align: left;
+  padding-left: 0;
+}
+.undo-btn {
+  width: 100px;
+  min-height: 35px;
+  padding: 4px 9px;
+  margin-left: 4px;
+  border: 1px solid #888;
+  border-radius: 5px;
+  background: #f8f8f8;
+  font-size: 14px;
+  -webkit-appearance: none;
+}
+.meal-checks {
+  margin: 14px 0 6px 0;
+  text-align: center;
+  font-size: 15px;
+}
+.meal-checks label {
+  margin: 0 10px;
+  white-space: nowrap;
+}
+.message {
+  min-height: 18px;
+  margin-top: 6px;
+  text-align: center;
+  font-size: 12px;
+}
+
+.virtual-time {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #ccc;
+  font-size: 12px;
+}
+.virtual-time-label {
+  display: block;
+  margin-bottom: 5px;
+}
+.virtual-time-input {
+  width: 125px;
+  height: 36px;
+  border: 1px solid #999;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 13px;
+  padding: 4px 6px;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+}
+.virtual-time .btn {
+  margin-left: 4px;
+}
+
+.edit-block {
+  margin: 0 0 12px 0;
+  padding: 0 0 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+.edit-row {
+  margin: 7px 0;
+  white-space: nowrap;
+}
+.edit-label {
+  display: inline-block;
+  width: 64px;
+  vertical-align: middle;
+}
+.edit-name-input {
+  width: calc(100% - 72px);
+  height: 36px;
+  border: 1px solid #999;
+  border-radius: 5px;
+  box-sizing: border-box;
+  padding: 5px 7px;
+  font-size: 14px;
+  -webkit-appearance: none;
+}
+.edit-interval-input {
+  width: 84px;
+  height: 36px;
+  border: 1px solid #999;
+  border-radius: 5px;
+  box-sizing: border-box;
+  padding: 5px 7px;
+  font-size: 14px;
+  text-align: center;
+  -webkit-appearance: none;
+}
+.dose-time-row {
+  margin-top: 12px;
+  text-align: right;
+}
+.dose-time-input {
+  width: 125px;
+  height: 36px;
+  border: 1px solid #999;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 13px;
+  padding: 4px 6px;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+}
+
+/* Prototype V07 detail layout */
+.detail-info {
+  padding: 10px 10px 14px 10px;
+  line-height: 1.45;
+}
+.edit-block {
+  margin: 0 0 10px 0;
+  padding: 0 0 10px 0;
+}
+.edit-row {
+  display: table;
+  width: 100%;
+  margin: 7px 0;
+  white-space: normal;
+}
+.edit-label {
+  display: table-cell;
+  width: 64px;
+  padding-right: 4px;
+  vertical-align: middle;
+  font-weight: bold;
+}
+.edit-field {
+  display: table-cell;
+  vertical-align: middle;
+}
+.edit-name-input {
+  width: 100%;
+}
+.interval-inline {
+  white-space: nowrap;
+}
+.interval-inline .edit-interval-input {
+  width: 84px;
+  vertical-align: middle;
+}
+.interval-inline .undo-btn {
+  vertical-align: middle;
+}
+.history-area {
+  margin: 12px 0 8px 0;
+}
+.history-line {
+  display: table;
+  width: 100%;
+  min-height: 32px;
+  margin: 1px 0;
+  white-space: normal;
+}
+.history-label {
+  display: table-cell;
+  width: 64px;
+  vertical-align: middle;
+  font-weight: bold;
+}
+.history-time {
+  display: table-cell;
+  width: auto;
+  vertical-align: middle;
+}
+.history-action {
+  display: table-cell;
+  width: 54px;
+  text-align: right;
+  vertical-align: middle;
+}
+.dose-row {
+  display: table;
+  width: 100%;
+  margin: 8px 0 12px 0;
+}
+.dose-label {
+  display: table-cell;
+  width: 64px;
+  vertical-align: middle;
+}
+.dose-field {
+  display: table-cell;
+  vertical-align: middle;
+}
+.dose-time-input {
+  width: 125px;
+  height: 36px;
+}
+.detail-dose-center {
+  text-align: center;
+  margin: 8px 0 4px 0;
+}
+.detail-dose-center .btn {
+  width: 124px;
+  margin: 0;
+}
+.detail-bottom-actions {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  margin-top: 4px;
+}
+.detail-bottom-actions .action-cell {
+  display: table-cell;
+  width: 50%;
+  padding: 4px 3px;
+  text-align: center;
+}
+.detail-bottom-actions .btn {
+  width: 124px;
+  margin: 0;
+}
+
+@media screen and (max-width: 340px) {
+  .header td,
+  .row td { font-size: 10px; padding-left: 1px; padding-right: 1px; }
+  .header .title { font-size: 12px; }
+  .name-button { font-size: 11px; padding-left: 4px; padding-right: 4px; }
+  .detail-info { font-size: 12px; padding-left: 6px; padding-right: 6px; }
+  .history-time { min-width: 118px; }
+}
+
+/* V10 基本3個設定画面：時刻から待機画面まで中央揃え */
+.meal-detail-info .dose-time-row {
+  text-align: center;
+}
+.meal-detail-info .action-area {
+  text-align: center;
+}
+.meal-detail-info .action-area .btn {
+  margin-left: 0;
+}
+
+
+/* V13 薬を追加画面センタリング */
+.add-screen {
+  text-align: center;
+}
+.add-field-row {
+  margin: 10px 0;
+  text-align: center;
+  white-space: nowrap;
+}
+.add-field-label {
+  display: inline-block;
+  width: 72px;
+  text-align: right;
+  margin-right: 8px;
+  font-weight: bold;
+}
+.add-name-input {
+  width: 170px;
+  height: 38px;
+  border: 1px solid #999;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+  padding: 5px 7px;
+  background: #fff;
+  -webkit-appearance: none;
+}
+.add-interval-input {
+  width: 84px;
+  height: 38px;
+  border: 1px solid #999;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+  padding: 5px 7px;
+  text-align: center;
+  background: #fff;
+  -webkit-appearance: none;
+}
+.add-actions {
+  margin-top: 14px;
+  text-align: center;
+}
+.add-actions .btn {
+  display: block;
+  margin: 8px auto;
+}
+
+</style>
+</head>
+<body>
+<div id="app">
+  <table class="header" aria-label="一覧ヘッダー">
+    <tr>
+      <td class="name title">ちょこっと お薬</td>
+      <td class="state">状態</td>
+      <td class="interval">間隔</td>
+      <td class="remain">残時間</td>
+      <td class="possible">服薬可能</td>
+    </tr>
+  </table>
+
+  <div id="screen"></div>
+
+  <div class="footer footer-centered">
+    <div class="footer-row footer-button-row">
+      <button type="button" class="btn btn-wide" id="addFooterBtn">薬を追加</button>
+      <button type="button" class="btn btn-wide" id="restoreMealsBtn">基本３個を復活</button>
+    </div>
+    <div class="virtual-time">
+      <div class="footer-row"><span class="virtual-time-label">仮想現在時刻</span></div>
+      <div class="footer-row virtual-control-row">
+        <input type="text" id="virtualNowInput" class="virtual-time-input" maxlength="16" aria-label="仮想現在時刻">
+        <button type="button" class="btn" id="virtualSetBtn">設定</button>
+        <button type="button" class="btn" id="virtualRealBtn">現在</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var STORAGE_KEY = 'chokotto_okusuri_v01';
+  var data = loadData();
+  var currentView = 'list';
+  var selectedId = null;
+  var timerId = null;
+  var virtualNowMs = null;
+
+  function emptyData() {
+    return {
+      nextId: 1,
+      medicines: [],
+      meals: {
+        breakfast: { baseName: '朝食後', lastTime: 0, insulin: false, enabled: true },
+        lunch:     { baseName: '昼食後', lastTime: 0, insulin: false, enabled: true },
+        dinner:    { baseName: '夕食後', lastTime: 0, insulin: false, enabled: true }
+      }
+    };
+  }
+
+  function loadData() {
+    var raw;
+    var obj;
+    try {
+      raw = window.localStorage.getItem(STORAGE_KEY);
+      if (!raw) { return emptyData(); }
+      obj = JSON.parse(raw);
+      if (!obj || !obj.medicines || !obj.meals) { return emptyData(); }
+      if (obj.meals.breakfast && typeof obj.meals.breakfast.enabled === 'undefined') { obj.meals.breakfast.enabled = true; }
+      if (obj.meals.lunch && typeof obj.meals.lunch.enabled === 'undefined') { obj.meals.lunch.enabled = true; }
+      if (obj.meals.dinner && typeof obj.meals.dinner.enabled === 'undefined') { obj.meals.dinner.enabled = true; }
+      return obj;
+    } catch (e) {
+      return emptyData();
+    }
+  }
+
+  function saveData() {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+      /* iOS private mode等で保存できない場合も画面動作は継続 */
+    }
+  }
+
+  function pad2(n) {
+    return n < 10 ? '0' + n : '' + n;
+  }
+
+  function realNow() {
+    return new Date().getTime();
+  }
+
+  function getNow() {
+    return virtualNowMs !== null ? virtualNowMs : realNow();
+  }
+
+  function formatInputDateTime(ms) {
+    var d = new Date(ms);
+    return d.getFullYear() + '/' + pad2(d.getMonth() + 1) + '/' + pad2(d.getDate()) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+  }
+
+  function parseVirtualDateTime(text) {
+    var m = /^(\d{4})\/(\d{1,2})\/(\d{1,2})\s+(\d{1,2}):(\d{2})$/.exec(String(text || '').replace(/^\s+|\s+$/g, ''));
+    var d;
+    if (!m) { return null; }
+    d = new Date(parseInt(m[1],10), parseInt(m[2],10)-1, parseInt(m[3],10), parseInt(m[4],10), parseInt(m[5],10), 0, 0);
+    if (isNaN(d.getTime())) { return null; }
+    if (d.getFullYear() !== parseInt(m[1],10) || d.getMonth() !== parseInt(m[2],10)-1 || d.getDate() !== parseInt(m[3],10) || d.getHours() !== parseInt(m[4],10) || d.getMinutes() !== parseInt(m[5],10)) { return null; }
+    return d.getTime();
+  }
+
+  function parseDateTime(text) {
+    return parseVirtualDateTime(text);
+  }
+
+  function formatDateTime(ms) {
+    if (!ms) { return ''; }
+    var d = new Date(ms);
+    return d.getFullYear() + '/' + pad2(d.getMonth() + 1) + '/' + pad2(d.getDate()) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+  }
+
+  function formatClock(ms) {
+    var d = new Date(ms);
+    return pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+  }
+
+  function formatHM(totalMinutes) {
+    var m = Math.max(0, Math.floor(totalMinutes));
+    var h = Math.floor(m / 60);
+    var mm = m % 60;
+    return pad2(h) + ':' + pad2(mm);
+  }
+
+  function formatElapsed(ms) {
+    if (!ms) { return '0:00'; }
+    var minutes = Math.max(0, Math.floor((getNow() - ms) / 60000));
+    var h = Math.floor(minutes / 60);
+    var m = minutes % 60;
+    return h + ':' + pad2(m);
+  }
+
+  function parseInterval(text) {
+    var s = String(text || '').replace(/\s/g, '');
+    var m = /^(\d{1,2}):(\d{2})$/.exec(s);
+    var h;
+    var mm;
+    if (!m) { return -1; }
+    h = parseInt(m[1], 10);
+    mm = parseInt(m[2], 10);
+    if (isNaN(h) || isNaN(mm) || h < 0 || mm < 0 || mm > 59) { return -1; }
+    if (h === 0 && mm === 0) { return -1; }
+    return h * 60 + mm;
+  }
+
+  function getMedicine(id) {
+    var i;
+    for (i = 0; i < data.medicines.length; i++) {
+      if (data.medicines[i].id === id) { return data.medicines[i]; }
+    }
+    return null;
+  }
+
+  function medicineStatus(med) {
+    var history = med.history || [];
+    var last = history.length ? history[history.length - 1] : 0;
+    var now = getNow();
+    var end;
+    var remainMinutes;
+    if (!last) {
+      return { active: false, state: '', remain: '残 0:00', possible: 'NOW', last: 0, end: 0 };
+    }
+    end = last + med.intervalMinutes * 60000;
+    if (now < end) {
+      remainMinutes = Math.ceil((end - now) / 60000);
+      return { active: true, state: '間隔中', remain: '残 ' + formatHM(remainMinutes), possible: formatClock(end), last: last, end: end };
+    }
+    return { active: false, state: '', remain: '残 0:00', possible: 'NOW', last: last, end: end };
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function listRowMedicine(med) {
+    var st = medicineStatus(med);
+    var cls = st.active ? 'list-row interval-active' : 'list-row';
+    return '' +
+      '<table class="row ' + cls + '"><tr>' +
+      '<td class="name"><button type="button" class="name-button med-select" data-id="' + med.id + '">' + escapeHtml(med.name) + '</button></td>' +
+      '<td class="state">' + st.state + '</td>' +
+      '<td class="interval">' + formatHM(med.intervalMinutes) + '</td>' +
+      '<td class="remain">（' + st.remain + '）</td>' +
+      '<td class="possible">' + st.possible + '</td>' +
+      '</tr></table>';
+  }
+
+  function mealDisplayName(meal) {
+    return meal.baseName + (meal.insulin ? 'インスリン' : '');
+  }
+
+  function listRowMeal(key) {
+    var meal = data.meals[key];
+    var cls = meal.lastTime ? 'list-row elapsed-active' : 'list-row';
+    return '' +
+      '<table class="row ' + cls + '"><tr>' +
+      '<td class="name"><button type="button" class="name-button meal-select" data-key="' + key + '">' + escapeHtml(mealDisplayName(meal)) + '</button></td>' +
+      '<td class="state"></td>' +
+      '<td class="interval"></td>' +
+      '<td class="remain">（経 ' + formatElapsed(meal.lastTime) + '）</td>' +
+      '<td class="possible"></td>' +
+      '</tr></table>';
+  }
+
+  function renderList() {
+    var html = '';
+    var i;
+    currentView = 'list';
+    selectedId = null;
+    for (i = 0; i < data.medicines.length; i++) {
+      html += listRowMedicine(data.medicines[i]);
+    }
+    if (data.meals.breakfast.enabled !== false) { html += listRowMeal('breakfast'); }
+    if (data.meals.lunch.enabled !== false) { html += listRowMeal('lunch'); }
+    if (data.meals.dinner.enabled !== false) { html += listRowMeal('dinner'); }
+    document.getElementById('screen').innerHTML = html;
+    bindListEvents();
+  }
+
+  function bindListEvents() {
+    var meds = document.getElementsByClassName('med-select');
+    var meals = document.getElementsByClassName('meal-select');
+    var i;
+    for (i = 0; i < meds.length; i++) {
+      meds[i].onclick = function () {
+        renderMedicineDetail(parseInt(this.getAttribute('data-id'), 10));
+      };
+    }
+    for (i = 0; i < meals.length; i++) {
+      meals[i].onclick = function () {
+        renderMealDetail(this.getAttribute('data-key'));
+      };
+    }
+  }
+
+  function renderAdd() {
+    currentView = 'add';
+    selectedId = null;
+    document.getElementById('screen').innerHTML = '' +
+      '<div class="content add-screen">' +
+        '<div class="add-field-row">' +
+          '<span class="add-field-label">服薬名称</span>' +
+          '<input id="medName" class="add-name-input" type="text" maxlength="24" value="" aria-label="服薬名称">' +
+        '</div>' +
+        '<div class="add-field-row">' +
+          '<span class="add-field-label">服薬間隔</span>' +
+          '<input id="medInterval" class="add-interval-input" type="text" inputmode="numeric" value="00:00" maxlength="5" aria-label="服薬間隔">' +
+        '</div>' +
+        '<div class="add-actions">' +
+          '<button type="button" class="btn btn-wide" id="saveMedBtn">薬を追加</button>' +
+          '<button type="button" class="btn btn-wide" id="saveDoseBtn">服薬登録</button>' +
+          '<button type="button" class="btn btn-wide" id="cancelAddBtn">追加中止</button>' +
+        '</div>' +
+        '<div class="message" id="addMessage"></div>' +
+      '</div>';
+
+    document.getElementById('saveMedBtn').onclick = function () { addMedicine(false); };
+    document.getElementById('saveDoseBtn').onclick = function () { addMedicine(true); };
+    document.getElementById('cancelAddBtn').onclick = function () { renderList(); };
+  }
+
+  function addMedicine(registerNow) {
+    var name = document.getElementById('medName').value.replace(/^\s+|\s+$/g, '');
+    var intervalText = document.getElementById('medInterval').value;
+    var intervalMinutes = parseInterval(intervalText);
+    var med;
+    if (!name) {
+      document.getElementById('addMessage').innerHTML = '薬名を入力してください。';
+      return;
+    }
+    if (intervalMinutes < 0) {
+      document.getElementById('addMessage').innerHTML = '服薬間隔は HH:MM で入力してください。';
+      return;
+    }
+    med = {
+      id: data.nextId++,
+      name: name,
+      intervalMinutes: intervalMinutes,
+      history: []
+    };
+    if (registerNow) {
+      med.history.push(getNow());
+    }
+    data.medicines.push(med);
+    saveData();
+    renderList();
+  }
+
+  function isWithinDoseInterval(med, doseTime) {
+    var now;
+    var end;
+    if (!doseTime) { return false; }
+    now = getNow();
+    end = doseTime + med.intervalMinutes * 60000;
+    return now >= doseTime && now < end;
+  }
+
+  function renderMedicineDetail(id) {
+    var med = getMedicine(id);
+    var st;
+    var hist;
+    var latest;
+    var previous;
+    var undoAllowed;
+    var previousUndoAllowed;
+    var detailHtml;
+    if (!med) { renderList(); return; }
+    currentView = 'medicine';
+    selectedId = id;
+    st = medicineStatus(med);
+    hist = med.history || [];
+    latest = hist.length ? hist[hist.length - 1] : 0;
+    previous = hist.length > 1 ? hist[hist.length - 2] : 0;
+    undoAllowed = isWithinDoseInterval(med, latest);
+    previousUndoAllowed = isWithinDoseInterval(med, previous);
+
+    detailHtml = '' +
+      '<div class="detail-main">' + listRowMedicine(med) + '</div>' +
+      '<div class="detail-info">' +
+        '<div class="edit-block">' +
+          '<div class="edit-row"><span class="edit-label">薬名</span><span class="edit-field"><input id="editMedName" class="edit-name-input" type="text" maxlength="24" value="' + escapeHtml(med.name) + '"></span></div>' +
+          '<div class="edit-row"><span class="edit-label">間隔</span><span class="edit-field interval-inline"><input id="editMedInterval" class="edit-interval-input" type="text" inputmode="numeric" maxlength="5" value="' + formatHM(med.intervalMinutes) + '">' +
+          '<button type="button" class="undo-btn" id="updateMedBtn">更新</button></span></div>' +
+          '<div class="message" id="editMessage"></div>' +
+        '</div>' +
+        '<div class="history-area">' +
+          '<div class="history-line">' +
+            '<span class="history-label">服薬履歴</span>' +
+            '<span class="history-time">' + "　" + (previous ? formatDateTime(previous) : '---') + '</span>' +
+            '<span class="history-action">' + (previousUndoAllowed ? '<button type="button" class="undo-btn" id="undoPreviousBtn">再設定</button>' : '') + '</span>' +
+          '</div>' +
+          '<div class="history-line">' +
+            '<span class="history-label">最終服薬</span>' +
+            '<span class="history-time">' + "　" + (latest ? formatDateTime(latest) : '---') + '</span>' +
+            '<span class="history-action">' + (undoAllowed ? '<button type="button" class="undo-btn" id="undoBtn">再設定</button>' : '') + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="dose-row">' +
+          '<span class="dose-label">服薬日時</span>' +
+          '<span class="dose-field"><input id="doseDateTime" class="dose-time-input" type="text" maxlength="16" value="' + formatInputDateTime(getNow()) + '" aria-label="服薬登録日時"></span>' +
+        '</div>' +
+        '<div class="detail-dose-center">' +
+          '<button type="button" class="btn" id="doseBtn">服薬登録</button>' +
+        '</div>' +
+        '<div class="detail-bottom-actions three-actions">' +
+          '<span class="action-cell"><button type="button" class="btn" id="resetBtn">リセット</button></span>' +
+          '<span class="action-cell"><button type="button" class="btn" id="deleteMedBtn">削除</button></span>' +
+          '<span class="action-cell"><button type="button" class="btn" id="cancelMedBtn">待機画面</button></span>' +
+        '</div>' +
+        '<div class="message" id="doseMessage"></div>' +
+      '</div>';
+
+    document.getElementById('screen').innerHTML = detailHtml;
+
+    document.getElementById('updateMedBtn').onclick = function () {
+      var name = document.getElementById('editMedName').value.replace(/^\s+|\s+$/g, '');
+      var intervalMinutes = parseInterval(document.getElementById('editMedInterval').value);
+      if (!name) {
+        document.getElementById('editMessage').innerHTML = '薬名を入力してください。';
+        return;
+      }
+      if (intervalMinutes < 0) {
+        document.getElementById('editMessage').innerHTML = '服薬間隔は HH:MM で入力してください。';
+        return;
+      }
+      med.name = name;
+      med.intervalMinutes = intervalMinutes;
+      saveData();
+      renderMedicineDetail(id);
+    };
+
+    document.getElementById('doseBtn').onclick = function () {
+      var doseMs = parseDateTime(document.getElementById('doseDateTime').value);
+      if (doseMs === null) {
+        document.getElementById('doseMessage').innerHTML = '服薬登録日時は YYYY/MM/DD HH:MM で入力してください。';
+        return;
+      }
+      med.history.push(doseMs);
+      med.history.sort(function (a, b) { return a - b; });
+      saveData();
+      renderList();
+    };
+
+    document.getElementById('resetBtn').onclick = function () {
+      med.history = [];
+      saveData();
+      renderMedicineDetail(id);
+    };
+
+    document.getElementById('deleteMedBtn').onclick = function () {
+      var i;
+      for (i = 0; i < data.medicines.length; i++) {
+        if (data.medicines[i].id === id) {
+          data.medicines.splice(i, 1);
+          break;
+        }
+      }
+      saveData();
+      renderList();
+    };
+
+    document.getElementById('cancelMedBtn').onclick = function () { renderList(); };
+
+    if (previousUndoAllowed) {
+      document.getElementById('undoPreviousBtn').onclick = function () {
+        /* 表示中の服薬履歴へ戻す＝それより新しい最終服薬を取り消す */
+        if (med.history.length > 1) {
+          med.history.pop();
+          saveData();
+          renderMedicineDetail(id);
+        }
+      };
+    }
+
+    if (undoAllowed) {
+      document.getElementById('undoBtn').onclick = function () {
+        med.history.pop();
+        saveData();
+        renderMedicineDetail(id);
+      };
+    }
+  }
+
+  function renderMealDetail(key) {
+    var meal = data.meals[key];
+    if (!meal) { renderList(); return; }
+    currentView = 'meal';
+    selectedId = key;
+
+    document.getElementById('screen').innerHTML = '' +
+      '<div class="detail-main">' + listRowMeal(key) + '</div>' +
+      '<div class="detail-info meal-detail-info">' +
+        '<div class="meal-checks">' +
+          '<label><input type="checkbox" id="mealDrug" checked> 薬</label>' +
+          '<label><input type="checkbox" id="mealInsulin"> インスリン</label>' +
+        '</div>' +
+        '<div class="dose-time-row">' +
+          '<input id="mealDoseDateTime" class="dose-time-input" type="text" maxlength="16" value="' + formatInputDateTime(getNow()) + '" aria-label="服薬登録日時">' +
+        '</div>' +
+        '<div class="action-area">' +
+          '<button type="button" class="btn btn-wide" id="mealDoseBtn">服薬登録</button><br>' +
+          '<button type="button" class="btn btn-wide" id="mealResetBtn">リセット</button><br>' +
+          '<button type="button" class="btn btn-wide" id="mealDeleteBtn">削除</button><br>' +
+          '<button type="button" class="btn btn-wide" id="cancelMealBtn">待機画面</button>' +
+        '</div>' +
+        '<div class="message" id="mealMessage"></div>' +
+      '</div>';
+
+    document.getElementById('mealDoseBtn').onclick = function () {
+      registerMeal(key);
+    };
+    document.getElementById('mealResetBtn').onclick = function () {
+      meal.lastTime = 0;
+      meal.insulin = false;
+      saveData();
+      renderMealDetail(key);
+    };
+    document.getElementById('mealDeleteBtn').onclick = function () {
+      meal.enabled = false;
+      meal.lastTime = 0;
+      meal.insulin = false;
+      saveData();
+      renderList();
+    };
+    document.getElementById('cancelMealBtn').onclick = function () { renderList(); };
+  }
+
+  function registerMeal(key) {
+    var drugChecked = document.getElementById('mealDrug').checked;
+    var insulinChecked = document.getElementById('mealInsulin').checked;
+    var now = parseDateTime(document.getElementById('mealDoseDateTime').value);
+    var keys = ['breakfast', 'lunch', 'dinner'];
+    var i;
+    if (now === null) {
+      document.getElementById('mealMessage').innerHTML = '服薬登録日時は YYYY/MM/DD HH:MM で入力してください。';
+      return;
+    }
+    if (!drugChecked && !insulinChecked) {
+      document.getElementById('mealMessage').innerHTML = '「薬」または「インスリン」を選択してください。';
+      return;
+    }
+
+    for (i = 0; i < keys.length; i++) {
+      if (keys[i] !== key) {
+        data.meals[keys[i]].lastTime = 0;
+        data.meals[keys[i]].insulin = false;
+      }
+    }
+
+    data.meals[key].lastTime = now;
+    data.meals[key].insulin = insulinChecked ? true : false;
+    saveData();
+    renderList();
+  }
+
+  function refreshVirtualInput() {
+    var el = document.getElementById('virtualNowInput');
+    if (el) { el.value = formatInputDateTime(getNow()); }
+  }
+
+  document.getElementById('virtualSetBtn').onclick = function () {
+    var value = parseVirtualDateTime(document.getElementById('virtualNowInput').value);
+    if (value === null) {
+      window.alert('仮想現在時刻は YYYY/MM/DD HH:MM で入力してください。');
+      refreshVirtualInput();
+      return;
+    }
+    virtualNowMs = value;
+    refreshCurrentView();
+    refreshVirtualInput();
+  };
+
+  document.getElementById('virtualRealBtn').onclick = function () {
+    virtualNowMs = null;
+    refreshCurrentView();
+    refreshVirtualInput();
+  };
+
+  document.getElementById('addFooterBtn').onclick = function () {
+    renderAdd();
+  };
+
+  document.getElementById('restoreMealsBtn').onclick = function () {
+    var keys = ['breakfast', 'lunch', 'dinner'];
+    var i;
+    for (i = 0; i < keys.length; i++) {
+      if (data.meals[keys[i]].enabled === false) {
+        data.meals[keys[i]].enabled = true;
+        data.meals[keys[i]].lastTime = 0;
+        data.meals[keys[i]].insulin = false;
+      }
+    }
+    saveData();
+    renderList();
+  };
+
+  function refreshCurrentView() {
+    if (currentView === 'list') {
+      renderList();
+    } else if (currentView === 'medicine' && selectedId !== null) {
+      renderMedicineDetail(selectedId);
+    } else if (currentView === 'meal' && selectedId !== null) {
+      renderMealDetail(selectedId);
+    }
+  }
+
+  renderList();
+  refreshVirtualInput();
+  timerId = window.setInterval(function () {
+    if (virtualNowMs === null) {
+      refreshCurrentView();
+      refreshVirtualInput();
+    }
+  }, 30000);
+}());
+</script>
+</body>
+</html>
+
+<!-- V10 -->
+<style>
+.three-actions { display:block; text-align:center; }
+.three-actions .action-cell { display:block; width:100%; padding:4px 0; text-align:center; }
+#restoreMealsBtn { margin-left:6px; }
+@media screen and (max-width: 360px) { #restoreMealsBtn { display:block; margin-left:0; margin-top:6px; } }
+</style>
+
+
+<!-- V11 -->
+<style>
+.footer-centered { text-align:center; }
+.footer-centered .footer-row { width:100%; text-align:center; margin:6px 0; }
+.footer-centered .footer-row .btn { display:inline-block; margin:0; }
+.footer-centered .virtual-time { text-align:center; }
+.footer-centered .virtual-time-label { display:inline-block; margin:0; text-align:center; }
+.footer-centered .virtual-time-input { display:inline-block; margin:0; text-align:center; }
+#restoreMealsBtn { margin-left:0 !important; }
+</style>
+
+
+<!-- V12 -->
+<style>
+.footer-centered .footer-row { text-align:center; }
+.footer-centered .footer-button-row { white-space:nowrap; }
+.footer-centered .footer-button-row .btn { display:inline-block; margin:0 3px; }
+.footer-centered .virtual-control-row { white-space:nowrap; }
+.footer-centered .virtual-control-row .virtual-time-input,
+.footer-centered .virtual-control-row .btn { display:inline-block; vertical-align:middle; margin:0 3px; }
+</style>
