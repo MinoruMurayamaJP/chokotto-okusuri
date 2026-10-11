@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
-<title>ちょこっと お薬 Prototype V16</title>
+<title>ちょこっと お薬 Prototype V21</title>
 <style>
 html, body {
   margin: 0;
@@ -52,11 +52,11 @@ body {
 .header .name,
 .row .name { width: 39%; text-align: left; padding-left: 6px; }
 .header .interval { width: 16%; font-size: 13px; }
-.row .interval { width: 16%; font-size: 14px; }
+.row .interval { width: 16%; font-size: 18px; }
 .header .remain { width: 25%; font-size: 13px; }
-.row .remain { width: 25%; font-size: 14px; }
+.row .remain { width: 25%; font-size: 18px; }
 .header .possible { width: 20%; font-size: 13px; }
-.row .possible { width: 20%; font-size: 14px; }
+.row .possible { width: 20%; font-size: 18px; }
 .header .title {
   font-weight: bold;
   font-size: 13px;
@@ -79,7 +79,7 @@ body {
   background: #fff;
   color: #222;
   text-align: left;
-  font-size: 12px;
+  font-size: 18px;
   box-sizing: border-box;
   -webkit-appearance: none;
 }
@@ -374,8 +374,8 @@ body {
   .header .interval, .row .interval,
   .header .remain, .row .remain,
   .header .possible { font-size: 13px; }
-  .row .interval, .row .remain, .row .possible { font-size: 14px; }
-  .name-button { font-size: 11px; padding-left: 4px; padding-right: 4px; }
+  .row .interval, .row .remain, .row .possible { font-size: 18px; }
+  .name-button { font-size: 18px; padding-left: 4px; padding-right: 4px; }
   .detail-info { font-size: 12px; padding-left: 6px; padding-right: 6px; }
   .history-time { min-width: 118px; }
 }
@@ -440,13 +440,48 @@ body {
   margin: 8px auto;
 }
 
+
+/* V17 待機画面の項目文字サイズを18pxに統一 */
+.row.list-row td { font-size: 18px; }
+.row.list-row .name-button { font-size: 18px; }
+@media screen and (max-width: 340px) {
+  .row.list-row td { font-size: 18px; }
+  .row.list-row .name-button { font-size: 18px; }
+}
+</style>
+
+<style>
+/* V19 待機画面：薬名・基本3個は15px、時間項目は18px */
+.row.list-row .name-button.med-select,
+.row.list-row .name-button.meal-select { font-size: 15px; }
+@media screen and (max-width: 340px) {
+  .row.list-row .name-button.med-select,
+  .row.list-row .name-button.meal-select { font-size: 15px; }
+}
+</style>
+
+<style>
+/* V21: 仮想現在時刻は起動時非表示。タイトル横の歯車で開閉 */
+.gear-btn {
+  border: 0;
+  background: transparent;
+  padding: 0 2px;
+  margin: 0;
+  font-size: 17px;
+  line-height: 1;
+  vertical-align: middle;
+  color: #333;
+  -webkit-appearance: none;
+}
+#virtualTimePanel { display: none; }
+#virtualTimePanel.virtual-open { display: block; }
 </style>
 </head>
 <body>
 <div id="app">
   <table class="header" aria-label="一覧ヘッダー">
     <tr>
-      <td class="name title">ちょこっと お薬</td>
+      <td class="name title">ちょこっと お薬 <button type="button" id="virtualToggleBtn" class="gear-btn" aria-label="仮想現在時刻の表示切替">⚙</button></td>
       <td class="interval">間隔</td>
       <td class="remain">残時間</td>
       <td class="possible">服薬可能</td>
@@ -460,7 +495,7 @@ body {
       <button type="button" class="btn btn-wide" id="addFooterBtn">薬を追加</button>
       <button type="button" class="btn btn-wide" id="restoreMealsBtn">基本３個を復活</button>
     </div>
-    <div class="virtual-time">
+    <div class="virtual-time" id="virtualTimePanel">
       <div class="footer-row"><span class="virtual-time-label">仮想現在時刻</span></div>
       <div class="footer-row virtual-control-row">
         <input type="text" id="virtualNowInput" class="virtual-time-input" maxlength="16" aria-label="仮想現在時刻">
@@ -567,11 +602,11 @@ body {
   }
 
   function formatElapsed(ms) {
-    if (!ms) { return '0:00'; }
+    if (!ms) { return '00:00'; }
     var minutes = Math.max(0, Math.floor((getNow() - ms) / 60000));
     var h = Math.floor(minutes / 60);
     var m = minutes % 60;
-    return h + ':' + pad2(m);
+    return pad2(h) + ':' + pad2(m);
   }
 
   function parseInterval(text) {
@@ -799,6 +834,14 @@ body {
 
     document.getElementById('screen').innerHTML = detailHtml;
 
+    /* サブ画面上段の薬名を再クリックしたら待機画面へ戻る */
+    (function () {
+      var topMed = document.getElementsByClassName('med-select');
+      if (topMed.length) {
+        topMed[0].onclick = function () { renderList(); };
+      }
+    }());
+
     document.getElementById('updateMedBtn').onclick = function () {
       var name = document.getElementById('editMedName').value.replace(/^\s+|\s+$/g, '');
       var intervalMinutes = parseInterval(document.getElementById('editMedInterval').value);
@@ -893,6 +936,14 @@ body {
         '<div class="message" id="mealMessage"></div>' +
       '</div>';
 
+    /* サブ画面上段の基本3個名を再クリックしたら待機画面へ戻る */
+    (function () {
+      var topMeal = document.getElementsByClassName('meal-select');
+      if (topMeal.length) {
+        topMeal[0].onclick = function () { renderList(); };
+      }
+    }());
+
     document.getElementById('mealDoseBtn').onclick = function () {
       registerMeal(key);
     };
@@ -961,6 +1012,17 @@ body {
     virtualNowMs = null;
     refreshCurrentView();
     refreshVirtualInput();
+  };
+
+  document.getElementById('virtualToggleBtn').onclick = function () {
+    var panel = document.getElementById('virtualTimePanel');
+    if (!panel) { return; }
+    if (panel.className.indexOf('virtual-open') >= 0) {
+      panel.className = 'virtual-time';
+    } else {
+      panel.className = 'virtual-time virtual-open';
+      refreshVirtualInput();
+    }
   };
 
   document.getElementById('addFooterBtn').onclick = function () {
@@ -1034,3 +1096,5 @@ body {
 .footer-centered .virtual-control-row .virtual-time-input,
 .footer-centered .virtual-control-row .btn { display:inline-block; vertical-align:middle; margin:0 3px; }
 </style>
+
+<!-- V20: detail row name toggles back to standby list -->
