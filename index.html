@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
-<title>ちょこっと お薬 Prototype V21</title>
+<title>ちょこっと お薬 Prototype V22</title>
 <style>
 html, body {
   margin: 0;
@@ -467,7 +467,7 @@ body {
   background: transparent;
   padding: 0 2px;
   margin: 0;
-  font-size: 17px;
+  font-size: 22px;
   line-height: 1;
   vertical-align: middle;
   color: #333;
@@ -637,14 +637,14 @@ body {
     var end;
     var remainMinutes;
     if (!last) {
-      return { active: false, state: '', remain: '残 0:00', possible: 'NOW', last: 0, end: 0 };
+      return { active: false, state: '', remain: '残 00:00', possible: 'NOW', last: 0, end: 0 };
     }
     end = last + med.intervalMinutes * 60000;
     if (now < end) {
       remainMinutes = Math.ceil((end - now) / 60000);
       return { active: true, state: '間隔中', remain: '残 ' + formatHM(remainMinutes), possible: formatClock(end), last: last, end: end };
     }
-    return { active: false, state: '', remain: '残 0:00', possible: 'NOW', last: last, end: end };
+    return { active: false, state: '', remain: '残 00:00', possible: 'NOW', last: last, end: end };
   }
 
   function escapeHtml(s) {
@@ -1098,3 +1098,9 @@ body {
 </style>
 
 <!-- V20: detail row name toggles back to standby list -->
+
+
+<!-- V22: title size -->
+<style>
+.header .title { font-size: 18px !important; }
+</style>
