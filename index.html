@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
-<title>ちょこっと お薬 Prototype V14</title>
+<title>ちょこっと お薬 Prototype V15</title>
 <style>
 html, body {
   margin: 0;
@@ -51,14 +51,12 @@ body {
 }
 .header .name,
 .row .name { width: 39%; text-align: left; padding-left: 6px; }
-.header .state,
-.row .state { width: 14%; }
 .header .interval,
-.row .interval { width: 14%; }
+.row .interval { width: 16%; font-size: 13px; }
 .header .remain,
-.row .remain { width: 18%; }
+.row .remain { width: 25%; font-size: 13px; }
 .header .possible,
-.row .possible { width: 15%; }
+.row .possible { width: 20%; font-size: 13px; }
 .header .title {
   font-weight: bold;
   font-size: 13px;
@@ -373,6 +371,9 @@ body {
   .header td,
   .row td { font-size: 10px; padding-left: 1px; padding-right: 1px; }
   .header .title { font-size: 12px; }
+  .header .interval, .row .interval,
+  .header .remain, .row .remain,
+  .header .possible, .row .possible { font-size: 13px; }
   .name-button { font-size: 11px; padding-left: 4px; padding-right: 4px; }
   .detail-info { font-size: 12px; padding-left: 6px; padding-right: 6px; }
   .history-time { min-width: 118px; }
@@ -445,7 +446,6 @@ body {
   <table class="header" aria-label="一覧ヘッダー">
     <tr>
       <td class="name title">ちょこっと お薬</td>
-      <td class="state">状態</td>
       <td class="interval">間隔</td>
       <td class="remain">残時間</td>
       <td class="possible">服薬可能</td>
@@ -626,7 +626,6 @@ body {
     return '' +
       '<table class="row ' + cls + '"><tr>' +
       '<td class="name"><button type="button" class="name-button med-select" data-id="' + med.id + '">' + escapeHtml(med.name) + '</button></td>' +
-      '<td class="state">' + st.state + '</td>' +
       '<td class="interval">' + formatHM(med.intervalMinutes) + '</td>' +
       '<td class="remain">（' + st.remain + '）</td>' +
       '<td class="possible">' + st.possible + '</td>' +
@@ -643,7 +642,6 @@ body {
     return '' +
       '<table class="row ' + cls + '"><tr>' +
       '<td class="name"><button type="button" class="name-button meal-select" data-key="' + key + '">' + escapeHtml(mealDisplayName(meal)) + '</button></td>' +
-      '<td class="state"></td>' +
       '<td class="interval"></td>' +
       '<td class="remain">（経 ' + formatElapsed(meal.lastTime) + '）</td>' +
       '<td class="possible"></td>' +
